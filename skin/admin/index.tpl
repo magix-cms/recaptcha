@@ -38,8 +38,20 @@
                             <div class="row">
                                 <div class="col-xs-12 col-sm-8">
                                     <div class="form-group">
-                                        <label for="secret">Secret :</label>
+                                        <label for="recaptchaData[secret]">Secret :</label>
                                         <input type="text" class="form-control" id="recaptchaData[secret]" name="recaptchaData[secret]" value="{$page.secret}" size="50" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-4">
+                                    <div class="form-group">
+                                        <label for="recaptchaData[version]">Version* :</label>
+                                        <select name="recaptchaData[version]" id="recaptchaData[version]" class="form-control required" required>
+                                            <option value="">{#select_version#}</option>
+                                            <option value="2"{if $page.version eq '2'} selected{/if}>v2</option>
+                                            <option value="3"{if $page.version eq '3'} selected{/if}>v3</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>

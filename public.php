@@ -8,7 +8,7 @@ include_once ('db.php');
 class plugins_recaptcha_public extends plugins_recaptcha_db{
 
     protected $data,$template,$collectionDomain,$modelDomain,$setBuildUrl;
-    public $gRecaptchaResponse;
+    public $gRecaptchaResponse,$recaptcha_action;
 
     public function __construct($t = null)
     {
@@ -17,10 +17,11 @@ class plugins_recaptcha_public extends plugins_recaptcha_db{
         $formClean = new form_inputEscape();
         $this->modelDomain = new frontend_model_domain($this->template);
         $this->setBuildUrl = new http_url();
-
-        if (http_request::isPost('g-recaptcha-response')) {
-            $this->gRecaptchaResponse = $formClean->simpleClean($_POST['g-recaptcha-response']);
-        }
+        // recaptcha v2
+        if (http_request::isPost('g-recaptcha-response')) $this->gRecaptchaResponse = $formClean->simpleClean($_POST['g-recaptcha-response']);
+        // recaptcha v3
+        elseif (http_request::isPost('recaptcha_response')) $this->gRecaptchaResponse = $formClean->simpleClean($_POST['recaptcha_response']);
+        if (http_request::isPost('recaptcha_action')) $this->recaptcha_action = $formClean->simpleClean($_POST['recaptcha_action']);
     }
 
     /**
@@ -53,27 +54,42 @@ class plugins_recaptcha_public extends plugins_recaptcha_db{
         if($data != null) {
             foreach ($domains as $key) {
                 if (isset($key['url_domain']) && $_SERVER['HTTP_HOST'] === $key['url_domain']) {
-                    if (isset($this->gRecaptchaResponse)) {
-                        // If the form submission includes the "g-captcha-response" field
-                        // Create an instance of the service using your secret
-                        $recaptcha = new \ReCaptcha\ReCaptcha($data['secret']);
-                        $resp = $recaptcha->setExpectedHostname($key['url_domain'])
-                            ->verify($this->gRecaptchaResponse, $_SERVER['REMOTE_ADDR']);
-                        if ($resp->isSuccess()) {
-                            return true;
-                        } else {
-                            return false;
-                            //$errors = $resp->getErrorCodes();
-                        }
+                    switch($data['version']) {
+                        case '2':
+                            if (isset($this->gRecaptchaResponse)) {
+                                // If the form submission includes the "g-captcha-response" field
+                                // Create an instance of the service using your secret
+                                $recaptcha = new \ReCaptcha\ReCaptcha($data['secret']);
+                                $resp = $recaptcha->setExpectedHostname($key['url_domain'])
+                                    ->verify($this->gRecaptchaResponse, $_SERVER['REMOTE_ADDR']);
+                                if ($resp->isSuccess()) {
+                                    return true;
+                                } else {
+                                    return false;
+                                    //$errors = $resp->getErrorCodes();
+                                }
+                            }
+                        break;
+                        case '3':
+                            if (isset($this->gRecaptchaResponse)) {
+                                $recaptcha = new \ReCaptcha\ReCaptcha($data['secret']);
+                                $resp = $recaptcha->setExpectedHostname($key['url_domain'])
+                                    ->setExpectedAction($this->recaptcha_action)
+                                    ->setScoreThreshold(0.5)
+                                    ->verify($this->gRecaptchaResponse, $_SERVER['REMOTE_ADDR']);
+                                if ($resp->isSuccess()) {
+                                    return true;
+                                    /*header('Content-type:application/json');
+                                    echo json_encode($resp->toArray());*/
+                                } else {
+                                    return false;
+                                }
+                            }
+                        break;
                     }
                 }
             }
         }
     }
-
-    /*public function run(){
-        $domains = $this->modelDomain->getValidDomains();
-        $this->getRecatpcha();
-    }*/
 }
 ?>

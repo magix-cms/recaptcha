@@ -44,8 +44,8 @@ class plugins_recaptcha_db
             switch ($config['type']) {
                 case 'newConfig':
 
-                    $sql = 'INSERT INTO mc_recaptcha (apiKey,secret,published,date_register)
-		            VALUE(:apiKey,:secret,:published,NOW())';
+                    $sql = 'INSERT INTO mc_recaptcha (apiKey,secret,version,published,date_register)
+		            VALUE(:apiKey,:secret,:version,:published,NOW())';
 
                     break;
             }
@@ -70,6 +70,7 @@ class plugins_recaptcha_db
                     SET 
                         apiKey=:apiKey,
                         secret=:secret,
+                        version=:version,
                         published=:published
                     WHERE id_recaptcha=:id';
                     break;

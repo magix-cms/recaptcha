@@ -155,6 +155,7 @@ class plugins_recaptcha_admin extends plugins_recaptcha_db
         $newData = array();
         $newData['apiKey'] = $this->recaptchaData['apiKey'];
         $newData['secret'] = $this->recaptchaData['secret'];
+        $newData['version'] = $this->recaptchaData['version'];
         $newData['published'] = (!isset($this->recaptchaData['published']) ? 0 : 1);
 
         if($setData['id_recaptcha']){
@@ -165,6 +166,7 @@ class plugins_recaptcha_admin extends plugins_recaptcha_db
                     'data' => array(
                         'apiKey'        =>  $newData['apiKey'],
                         'secret'        =>  $newData['secret'],
+                        'version'       =>  $newData['version'],
                         'published'     =>  $newData['published'],
                         'id'            =>  $setData['id_recaptcha'],
                     )
@@ -177,6 +179,7 @@ class plugins_recaptcha_admin extends plugins_recaptcha_db
                     'data' => array(
                         'apiKey'     =>  $newData['apiKey'],
                         'secret'     =>  $newData['secret'],
+                        'version'       =>  $newData['version'],
                         'published'  =>  $newData['published']
                     )
                 )

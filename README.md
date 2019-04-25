@@ -2,7 +2,7 @@
 # recaptcha
 Plugin Google Recaptcha for Magix CMS 3
 
-![screenshot_2018-11-19 recaptcha magix cms admin](https://user-images.githubusercontent.com/356674/48693390-98df4600-ebd9-11e8-941b-9017d79601a6.png)
+![Screenshot_2019-04-25 recaptcha Magix CMS Admin](https://user-images.githubusercontent.com/356674/56717181-66171c00-673c-11e9-9cb7-ee4c15755910.png)
 
 ## Installation
  * Décompresser l'archive dans le dossier "plugins" de magix cms
@@ -15,5 +15,5 @@ Plugin Google Recaptcha for Magix CMS 3
 ### Ajouter dans contact.tpl la ligne suivante
 
 ```smarty
-{include file="recaptcha/form/recaptcha.tpl" data=$recaptcha}
+{include file="recaptcha/form/recaptcha.tpl" data=$recaptcha action="contact"}
 ````
