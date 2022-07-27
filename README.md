@@ -7,7 +7,8 @@ Plugin Google Recaptcha for Magix CMS 3
 ## Installation
  * Décompresser l'archive dans le dossier "plugins" de magix cms
  * Connectez-vous dans l'administration de votre site internet
- * Cliquer sur l'onglet plugins du menu pour installer recaptcha.
+ * Cliquer sur l'onglet plugins du menu déroulant pour sélectionner advantage (points forts).
+ * Une fois dans le plugin, laisser faire l'auto installation
  * Il ne reste que la configuration du plugin pour correspondre avec vos données.
  * Copier le fichier **recaptcha.tpl** dans le dossier form/recaptcha de votre skin.
 
