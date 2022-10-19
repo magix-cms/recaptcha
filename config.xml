@@ -19,8 +19,8 @@
 		</authors>
 		<release>
 			<date_create>14/11/2018</date_create>
-			<date_update>27/07/2022</date_update>
-			<version>3.0</version>
+			<date_update>19/10/2022</date_update>
+			<version>2.1</version>
 			<phase>Stable</phase>
 		</release>
 		<bind>
@@ -29,9 +29,6 @@
 			</plugin>
 			<plugin>
 				<name>contact</name>
-			</plugin>
-			<plugin>
-				<name>conference</name>
 			</plugin>
 		</bind>
 		<support>
