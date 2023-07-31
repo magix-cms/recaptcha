@@ -1,14 +1,15 @@
-{if is_array($data) && !empty($data)}
-    {if $data.version eq '2'}
+{recaptcha_data}
+{if is_array($recaptcha) && !empty($recaptcha)}
+    {if $recaptcha.version eq '2'}
         <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&hl={$lang}" async defer></script>
-        <div class="g-recaptcha" data-sitekey="{$data.apikey}"></div>
+        <div class="g-recaptcha" data-sitekey="{$recaptcha.apikey}"></div>
         <input type="hidden" class="hiddenRecaptcha required" name="hiddenRecaptcha" {*id="hiddenRecaptcha"*}>
-    {elseif $data.version eq '3'}
-        <script src="https://www.google.com/recaptcha/api.js?render={$data.apikey}"></script>
+    {elseif $recaptcha.version eq '3'}
+        <script src="https://www.google.com/recaptcha/api.js?render={$recaptcha.apikey}"></script>
         <script>
             grecaptcha.ready(function () {
                 var grecaptcha_opts = document.querySelector('.recaptcha_{$action} [name="recaptcha_action"]').value;
-                grecaptcha.execute('{$data.apikey}', { action: grecaptcha_opts }).then(function (token) {
+                grecaptcha.execute('{$recaptcha.apikey}', { action: grecaptcha_opts }).then(function (token) {
                     var recaptchaResponse = document.querySelector('.recaptcha_{$action} [name="recaptcha_response"]');
                     recaptchaResponse.value = token;
                 });

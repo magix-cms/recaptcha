@@ -1,4 +1,14 @@
 <?php
+/**
+ * @category plugin
+ * @package recaptcha
+ * @copyright MAGIX CMS Copyright (c) 2011 Gerits Aurelien, http://www.magix-dev.be, http://www.magix-cms.com
+ * @license Dual licensed under the MIT or GPL Version 3 licenses.
+ * @version 1.0
+ * @create 20-12-2021
+ * @author Aurélien Gérits <aurelien@magix-cms.com>
+ * @name plugins_recaptcha_db
+ */
 class plugins_recaptcha_db {
 	/**
 	 * @var debug_logger $logger
@@ -10,20 +20,24 @@ class plugins_recaptcha_db {
 	 * @param array $params
 	 * @return array|bool
 	 */
-	public function fetchData(array $config,array $params = []) {
+	public function fetchData(array $config, array $params = []) {
 		if ($config['context'] === 'all') {
+			switch ($config['type']) {
+				default:
+					return false;
+			}
 
-			/*try {
+			try {
 				return component_routing_db::layer()->fetchAll($query, $params);
 			}
 			catch (Exception $e) {
 				if(!isset($this->logger)) $this->logger = new debug_logger(MP_LOG_DIR);
 				$this->logger->log('statement','db',$e->getMessage(),$this->logger::LOG_MONTH);
-			}*/
+			}
 		}
 		elseif ($config['context'] === 'one') {
 			switch ($config['type']) {
-				case 'root':
+				case 'config':
 					$query = 'SELECT * FROM mc_recaptcha ORDER BY id_recaptcha DESC LIMIT 0,1';
 					break;
 				case 'page':
@@ -44,18 +58,16 @@ class plugins_recaptcha_db {
 		return false;
     }
 
-    /**
-     * @param array $config
-     * @param array $params
-     * @return bool|string
-     */
-    public function insert(array $config, array $params = []) {
-		switch ($config['type']) {
+	/**
+	 * @param string $type
+	 * @param array $params
+	 * @return bool
+	 */
+	public function insert(string $type, array $params = []): bool {
+		switch ($type) {
 			case 'newConfig':
-
 				$query = 'INSERT INTO mc_recaptcha (apiKey,secret,version,published,date_register)
-				VALUE(:apiKey,:secret,:version,:published,NOW())';
-
+						VALUE(:apiKey,:secret,:version,:published,NOW())';
 				break;
 			default:
 				return false;
@@ -66,36 +78,40 @@ class plugins_recaptcha_db {
 			return true;
 		}
 		catch (Exception $e) {
-			return 'Exception reçue : '.$e->getMessage();
+			if(!isset($this->logger)) $this->logger = new debug_logger(MP_LOG_DIR);
+			$this->logger->log('statement','db',$e->getMessage(),$this->logger::LOG_MONTH);
+			return false;
 		}
     }
 
-    /**
-     * @param array $config
-     * @param array $params
-     * @return bool|string
-     */
-    public function update(array $config, array $params = []) {
-		switch ($config['type']) {
+	/**
+	 * @param string $type
+	 * @param array $params
+	 * @return bool
+	 */
+	public function update(string $type, array $params = []): bool {
+        switch ($type) {
 			case 'config':
 				$query = 'UPDATE mc_recaptcha
-				SET 
-					apiKey=:apiKey,
-					secret=:secret,
-					version=:version,
-					published=:published
-				WHERE id_recaptcha=:id';
+						SET 
+							apiKey = :apiKey,
+							secret = :secret,
+							version = :version,
+							published = :published
+						WHERE id_recaptcha = :id';
 				break;
 			default:
 				return false;
-		}
+            }
 
 		try {
 			component_routing_db::layer()->update($query,$params);
 			return true;
 		}
 		catch (Exception $e) {
-			return 'Exception reçue : '.$e->getMessage();
+			if(!isset($this->logger)) $this->logger = new debug_logger(MP_LOG_DIR);
+			$this->logger->log('statement','db',$e->getMessage(),$this->logger::LOG_MONTH);
+			return false;
 		}
     }
 }

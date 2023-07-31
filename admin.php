@@ -4,12 +4,12 @@ require_once ('db.php');
  # -- BEGIN LICENSE BLOCK ----------------------------------
  #
  # This file is part of MAGIX CMS.
- # MAGIX CMS, The content management system optimized for users
- # Copyright (C) 2008 - 2013 magix-cms.com <support@magix-cms.com>
+ # MAGIX CMS, The tabspanelContent management system optimized for users
+ # Copyright (C) 2008 - 2021 magix-cms.com <support@magix-cms.com>
  #
  # OFFICIAL TEAM :
  #
- #   * Gerits Aurelien (Author - Developer) <aurelien@magix-cms.com> <contact@aurelien-gerits.be>
+ #   * Aurelien Gerits (Author - Developer) <aurelien@magix-cms.com> <contact@aurelien-gerits.be>
  #
  # Redistributions of files must retain the above copyright notice.
  # This program is free software: you can redistribute it and/or modify
@@ -33,69 +33,80 @@ require_once ('db.php');
  # versions in the future. If you wish to customize MAGIX CMS for your
  # needs please refer to http://www.magix-cms.com for more information.
  */
-class plugins_recaptcha_admin extends plugins_recaptcha_db
-{
-    protected $controller, $message, $template, $plugins, $modelLanguage, $collectionLanguage, $data, $header, $routingUrl, $domain;
-    /**
-     * GET
-     * @var $getlang ,
-     * @var $edit
-     */
-    public $getlang, $action, $edit, $tab;
+/**
+ * @category plugins
+ * @package recaptcha
+ * @copyright  MAGIX CMS Copyright (c) 2011 - 2013 Gerits Aurelien, http://www.magix-dev.be, http://www.magix-cms.com
+ * @license Dual licensed under the MIT or GPL Version 3 licenses.
+ * @version 2.0
+ * @create 26-08-2011
+ * @Update 12-04-2021
+ * @author Gérits Aurélien <contact@magix-dev.be>
+ * @name plugins_recaptcha_admin
+ */
+class plugins_recaptcha_admin extends plugins_recaptcha_db {
+	/**
+	 * @var backend_model_template $template
+	 * @var backend_controller_plugins $plugins
+	 * @var backend_model_data $data
+	 * @var component_core_message $message
+	 * @var backend_model_language $modelLanguage
+	 * @var component_collections_language $collectionLanguage
+	 * @var backend_controller_domain $domain
+	 * @var component_routing_url $routingUrl
+	 */
+	protected backend_model_template $template;
+	protected backend_controller_plugins $plugins;
+	protected backend_model_data $data;
+	protected component_core_message $message;
+	protected backend_model_language $modelLanguage;
+	protected component_collections_language $collectionLanguage;
+	protected backend_controller_domain $domain;
+	protected component_routing_url $routingUrl;
 
     /**
-     * POST
-     * @var $slide
-     * @var $sliderorder
+     * @var string $lang ,
+     * @var string $action
+     * @var string $tab
      */
-    public $recaptchaData, $id;
+    public string
+		$lang,
+		$action,
+		$tab;
 
     /**
-     * Constructor
+     * @var int $edit
      */
-    public function __construct()
-    {
+    public int $edit;
+
+    /**
+     * @var array $recaptchaData
+     */
+    public array $recaptchaData;
+
+	/**
+	 *
+	 */
+    public function __construct() {
         $this->template = new backend_model_template();
         $this->plugins = new backend_controller_plugins();
         $this->message = new component_core_message($this->template);
         $this->modelLanguage = new backend_model_language($this->template);
         $this->collectionLanguage = new component_collections_language();
         $this->data = new backend_model_data($this);
-        $this->header = new http_header();
         $this->domain = new backend_controller_domain();
-
         $this->routingUrl = new component_routing_url();
-
-        $formClean = new form_inputEscape();
-
-        // --- Get
-        if (http_request::isGet('controller')) {
-            $this->controller = $formClean->simpleClean($_GET['controller']);
-        }
-        if (http_request::isGet('edit')) {
-            $this->edit = $formClean->numeric($_GET['edit']);
-        }
-        if (http_request::isGet('action')) {
-            $this->action = $formClean->simpleClean($_GET['action']);
-        } elseif (http_request::isPost('action')) {
-            $this->action = $formClean->simpleClean($_POST['action']);
-        }
-        if (http_request::isGet('tabs')) {
-            $this->tab = $formClean->simpleClean($_GET['tabs']);
-        }
-        if (http_request::isPost('recaptchaData')) {
-            $this->recaptchaData = $formClean->arrayClean($_POST['recaptchaData']);
-        }
     }
+
     /**
      * Assign data to the defined variable or return the data
      * @param string $type
      * @param string|int|null $id
-     * @param string $context
-     * @param boolean $assign
+     * @param string|null $context
+     * @param bool|string $assign
      * @return mixed
      */
-    private function getItems($type, $id = null, $context = null, $assign = true) {
+    private function getItems(string $type, $id = null, ?string $context = null, $assign = true) {
         return $this->data->getItems($type, $id, $context, $assign);
     }
 
@@ -103,105 +114,48 @@ class plugins_recaptcha_admin extends plugins_recaptcha_db
      * Method to override the name of the plugin in the admin menu
      * @return string
      */
-    public function getExtensionName()
-    {
+    public function getExtensionName(): string {
         return $this->template->getConfigVars('recaptcha_plugin');
-    }
-
-    /**
-     * @param $data
-     * @throws Exception
-     */
-    private function upd($data)
-    {
-        switch ($data['type']) {
-            case 'config':
-                parent::update(
-                    array(
-                        //'context' => $data['context'],
-                        'type' => $data['type']
-                    ),
-                    $data['data']
-                );
-                break;
-        }
-    }
-
-    /**
-     * Update data
-     * @param $data
-     * @throws Exception
-     */
-    private function add($data)
-    {
-        switch ($data['type']) {
-            case 'newConfig':
-                parent::insert(
-                    array(
-                        //'context' => $data['context'],
-                        'type' => $data['type']
-                    ),
-                    $data['data']
-                );
-                break;
-        }
-    }
-
-    /**
-     * @throws Exception
-     */
-    private function save(){
-        $setData = $this->getItems('root',NULL,'one',false);
-        $newData = array();
-        $newData['apiKey'] = $this->recaptchaData['apiKey'];
-        $newData['secret'] = $this->recaptchaData['secret'];
-        $newData['version'] = $this->recaptchaData['version'];
-        $newData['published'] = (!isset($this->recaptchaData['published']) ? 0 : 1);
-
-        if($setData['id_recaptcha']){
-
-            $this->upd(
-                array(
-                    'type' => 'config',
-                    'data' => array(
-                        'apiKey'        =>  $newData['apiKey'],
-                        'secret'        =>  $newData['secret'],
-                        'version'       =>  $newData['version'],
-                        'published'     =>  $newData['published'],
-                        'id'            =>  $setData['id_recaptcha'],
-                    )
-                )
-            );
-        }else{
-            $this->add(
-                array(
-                    'type' => 'newConfig',
-                    'data' => array(
-                        'apiKey'     =>  $newData['apiKey'],
-                        'secret'     =>  $newData['secret'],
-                        'version'       =>  $newData['version'],
-                        'published'  =>  $newData['published']
-                    )
-                )
-            );
-        }
-
-        $this->message->json_post_response(true, 'update');
     }
 
     /**
      *
      */
     public function run(){
-        if(isset($this->action)) {
-            switch ($this->action) {
-                case 'edit':
-                    $this->save();
-                    break;
+		if (http_request::isGet('edit')) $this->edit = form_inputEscape::numeric($_GET['edit']);
+		if (http_request::isGet('tabs')) $this->tab = form_inputEscape::simpleClean($_GET['tabs']);
+		if (http_request::isRequest('action')) $this->action = form_inputEscape::simpleClean($_REQUEST['action']);
+
+		$config = $this->getItems('config',NULL,'one',false);
+
+        if(http_request::isMethod('POST') && !empty($this->action)) {
+			$status = false;
+			$type = 'error';
+
+			if (http_request::isPost('recaptchaData')) $this->recaptchaData = form_inputEscape::arrayClean($_POST['recaptchaData']);
+
+            if($this->action === 'edit' && !empty($this->recaptchaData)) {
+				$newData = [
+					'apiKey' => $this->recaptchaData['apiKey'],
+					'secret' => $this->recaptchaData['secret'],
+					'version' => $this->recaptchaData['version'],
+					'published' => (!isset($this->recaptchaData['published']) ? 0 : 1)
+				];
+
+				if($config['id_recaptcha']){
+					$newData['id'] = $config['id_recaptcha'];
+					parent::update('config',$newData);
+				}
+				else {
+					parent::insert('config',$newData);
+				}
+				$status = true;
+				$type = 'update';
             }
-        }else{
-            $data = $this->getItems('root',NULL,'one',false);
-            $this->template->assign('page', $data);
+			$this->message->json_post_response($status, $type);
+        }
+		else {
+            $this->template->assign('page', $config);
             $this->template->display('index.tpl');
         }
     }
