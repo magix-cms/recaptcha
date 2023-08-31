@@ -65,7 +65,7 @@ class plugins_recaptcha_db {
 	 */
 	public function insert(string $type, array $params = []): bool {
 		switch ($type) {
-			case 'newConfig':
+			case 'config':
 				$query = 'INSERT INTO mc_recaptcha (apiKey,secret,version,published,date_register)
 						VALUE(:apiKey,:secret,:version,:published,NOW())';
 				break;
