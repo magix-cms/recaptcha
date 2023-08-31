@@ -15,5 +15,7 @@ Plugin Google Recaptcha for Magix CMS 3
 ### Ajouter dans contact.tpl la ligne suivante
 
 ```smarty
-{include file="recaptcha/form/recaptcha.tpl" data=$recaptcha action="contact"}
+{if isset($contact_config.recaptcha) && $contact_config.recaptcha}
+    {include file="recaptcha/form/recaptcha.tpl" action="contact"}
+{/if}
 ````
