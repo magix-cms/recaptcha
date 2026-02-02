@@ -1,25 +1,33 @@
-![recaptcha-logo](https://user-images.githubusercontent.com/356674/48693498-ee1b5780-ebd9-11e8-81f3-e5d528f3475c.png)
-# recaptcha
-Plugin Google Recaptcha for Magix CMS 3
+# Google reCAPTCHA pour Magix CMS 3
 
-### version
+Protégez vos formulaires contre le spam avec l'intégration officielle de Google reCAPTCHA pour Magix CMS.
 
 [![release](https://img.shields.io/github/release/magix-cms/recaptcha.svg)](https://github.com/magix-cms/recaptcha/releases/latest)
+![License](https://img.shields.io/github/license/magix-cms/recaptcha.svg)
+![PHP Version](https://img.shields.io/badge/php-%3E%3D%207.4-blue.svg)
 
-![Screenshot_2019-04-25 recaptcha Magix CMS Admin](https://user-images.githubusercontent.com/356674/56717181-66171c00-673c-11e9-9cb7-ee4c15755910.png)
+![Admin Screenshot](https://user-images.githubusercontent.com/356674/56717181-66171c00-673c-11e9-9cb7-ee4c15755910.png)
 
-## Installation
- * Décompresser l'archive dans le dossier "plugins" de magix cms
- * Connectez-vous dans l'administration de votre site internet
- * Cliquer sur l'onglet plugins du menu déroulant pour sélectionner advantage (points forts).
- * Une fois dans le plugin, laisser faire l'auto installation
- * Il ne reste que la configuration du plugin pour correspondre avec vos données.
- * Copier le fichier **recaptcha.tpl** dans le dossier form/recaptcha de votre skin.
+##  Installation
 
-### Ajouter dans contact.tpl la ligne suivante
+1. **Upload :** Décompressez l'archive dans le dossier `/plugins` de votre installation Magix CMS.
+2. **Activation :** Connectez-vous à l'administration, allez dans le menu **Plugins** et sélectionnez **recaptcha**.
+3. **Auto-install :** L'installation se finalise automatiquement lors de l'ouverture du plugin.
+4. **Configuration :** Saisissez votre *Site Key* et *Secret Key* obtenus sur [Google reCAPTCHA](https://www.google.com/recaptcha/admin).
+5. **Template :** Copiez le fichier `recaptcha.tpl` (situé dans le plugin) vers le dossier `form/recaptcha/` de votre skin actuel.
+
+##  Utilisation
+
+Pour afficher le captcha dans votre formulaire de contact, ajoutez ce bloc dans votre fichier `contact.tpl` :
 
 ```smarty
 {if isset($contact_config.recaptcha) && $contact_config.recaptcha}
     {include file="recaptcha/form/recaptcha.tpl" action="contact"}
 {/if}
-````
+```
+
+## Caractéristiques
+Compatible Google reCAPTCHA v2 et v3.
+Installation automatisée des tables/fichiers.
+Intégration native avec le module de contact Magix CMS.
+
