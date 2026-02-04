@@ -7,38 +7,40 @@
     {elseif $recaptcha.version eq '3'}
         <script async src="https://www.google.com/recaptcha/api.js?render={$recaptcha.apikey}"></script>
         <script type="application/javascript">
-            if(typeof grecaptcha === 'undefined') {
-                var grecaptcha = {};
-            }
-            grecaptcha.ready = function(cb){
-                if(typeof grecaptcha.execute === 'undefined') {
-                    const c = '___grecaptcha_cfg';
-                    window[c] = window[c] || {};
-                    (window[c]['fns'] = window[c]['fns']||[]).push(cb);
-                } else {
-                    cb();
-                }
-            }
-            function getRecaptcha() {ldelim}
-                grecaptcha.ready(function () {
-                    var actionInput = document.querySelector('.recaptcha_{$action} [name="recaptcha_action"]');
-                    var responseInput = document.querySelector('.recaptcha_{$action} [name="recaptcha_response"]');
-
-                    if (actionInput && responseInput) {
-                        var grecaptcha_opts = actionInput.value;
-                        grecaptcha.execute('{$recaptcha.apikey}', { action: grecaptcha_opts }).then(function (token) {
-                            responseInput.value = token;
+            function updateRecaptcha() {ldelim}
+                if (typeof grecaptcha !== 'undefined' && grecaptcha.execute) {
+                    grecaptcha.ready(function () {
+                        grecaptcha.execute('{$recaptcha.apikey}', { action: '{$action}' }).then(function (token) {
+                            var responseInput = document.querySelector('.recaptcha_{$action} [name="recaptcha_response"]');
+                            if (responseInput) {
+                                responseInput.value = token;
+                            }
                         });
-                    }
-                });
+                    });
+                }
                 {rdelim}
-            getRecaptcha();
-            setInterval(function(){
-                getRecaptcha();
-            }, 90000);
+
+            setTimeout(updateRecaptcha, 1000);
+            setInterval(updateRecaptcha, 90000);
+
+            document.addEventListener('click', function (e) {
+
+                var submitBtn = e.target.closest('.recaptcha_{$action} ~ * [type="submit"]') || e.target.closest('form [type="submit"]');
+
+                if (submitBtn) {
+                    // Désactiver le bouton 1 seconde pour éviter le double-clic frénétique
+                    // submitBtn.style.pointerEvents = 'none';
+                    // setTimeout(function(){ submitBtn.style.pointerEvents = 'auto'; }, 2000);
+
+                    setTimeout(function() {
+                        updateRecaptcha();
+                    }, 500);
+                }
+            });
         </script>
+
         <div class="recaptcha_{$action}">
-            <input type="hidden" name="recaptcha_response" class="hiddenRecaptcha">
+            <input type="hidden" name="recaptcha_response" value="">
             <input type="hidden" name="recaptcha_action" value="{$action}">
         </div>
     {/if}

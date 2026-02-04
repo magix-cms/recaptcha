@@ -122,14 +122,19 @@ class plugins_recaptcha_public extends plugins_recaptcha_db {
 								break;
 							case '3':
 								if (http_request::isPost('recaptcha_response')) {
-									$this->response = form_inputEscape::simpleClean($_POST['recaptcha_response']);
+									$this->response = $_POST['recaptcha_response'];//form_inputEscape::simpleClean($_POST['recaptcha_response']);
 
 									if (http_request::isPost('recaptcha_action')) {
-										$this->action = form_inputEscape::simpleClean($_POST['recaptcha_action']);
+										$this->action = $_POST['recaptcha_action'];//form_inputEscape::simpleClean($_POST['recaptcha_action']);
 										$resp = $recaptcha->setExpectedHostname($domain['url_domain'])
-											->setExpectedAction($this->action)
-											->setScoreThreshold(0.5)
+											//$resp = $recaptcha
+                                            ->setExpectedAction($this->action)
+                                            ->setScoreThreshold(0.5)
 											->verify($this->response, $_SERVER['REMOTE_ADDR']);
+                                        if (!$resp->isSuccess()) {
+                                            if(!isset($this->logger)) $this->logger = new debug_logger(MP_LOG_DIR);
+                                            $this->logger->log('statement','error',json_encode($resp->getErrorCodes()),$this->logger::LOG_MONTH);
+                                        }
 									}
 								}
 								break;
