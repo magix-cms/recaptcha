@@ -28,13 +28,12 @@
                 var submitBtn = e.target.closest('.recaptcha_{$action} ~ * [type="submit"]') || e.target.closest('form [type="submit"]');
 
                 if (submitBtn) {
-                    // Désactiver le bouton 1 seconde pour éviter le double-clic frénétique
-                    // submitBtn.style.pointerEvents = 'none';
-                    // setTimeout(function(){ submitBtn.style.pointerEvents = 'auto'; }, 2000);
+                    submitBtn.classList.add('is-submitting');
+                    updateRecaptcha();
 
                     setTimeout(function() {
-                        updateRecaptcha();
-                    }, 500);
+                        submitBtn.classList.remove('is-submitting');
+                    }, 3000);
                 }
             });
         </script>
